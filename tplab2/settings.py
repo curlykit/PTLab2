@@ -78,15 +78,12 @@ WSGI_APPLICATION = 'tplab2.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# Database
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'django_db',
-        'USER': 'postgres',
-        'PASSWORD': 'ps_password',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.config(
+        default='postgresql://postgres:ps_password@localhost/django_db',
+        conn_max_age=600
+    )
 }
 
 # DATABASE_URL = os.environ.get('DATABASE_URL')
@@ -143,3 +140,17 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 import dj_database_url
 db_from_env = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(db_from_env)
+
+# DATABASE DEBUG
+print("=== DATABASE DEBUG ===")
+print(f"DATABASE_URL: {os.environ.get('DATABASE_URL')}")
+print(f"DATABASES default: {DATABASES['default']}")
+
+# Проверка подключения к базе
+try:
+    from django.db import connection
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT 1")
+    print("✅ DATABASE: Connection successful")
+except Exception as e:
+    print(f"❌ DATABASE: Connection failed - {e}")

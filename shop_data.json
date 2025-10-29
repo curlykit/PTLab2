@@ -1,0 +1,202 @@
+[
+{
+  "model": "shop.product",
+  "pk": 1,
+  "fields": {
+    "name": "Стол",
+    "price": "2000.00",
+    "description": "",
+    "quantity": 0
+  }
+},
+{
+  "model": "shop.product",
+  "pk": 2,
+  "fields": {
+    "name": "Стул",
+    "price": "1000.00",
+    "description": "",
+    "quantity": 7
+  }
+},
+{
+  "model": "shop.product",
+  "pk": 3,
+  "fields": {
+    "name": "Табурет",
+    "price": "500.00",
+    "description": "",
+    "quantity": 10
+  }
+},
+{
+  "model": "shop.purchase",
+  "pk": 1,
+  "fields": {
+    "product": 1,
+    "person": "rgrg",
+    "address": "rgrgr",
+    "date": "2025-10-29T15:55:02.273"
+  }
+},
+{
+  "model": "shop.purchase",
+  "pk": 2,
+  "fields": {
+    "product": 1,
+    "person": "rrrrr",
+    "address": "rrrr",
+    "date": "2025-10-29T15:55:10.796"
+  }
+},
+{
+  "model": "shop.purchase",
+  "pk": 3,
+  "fields": {
+    "product": 1,
+    "person": "rrrrr",
+    "address": "rrrr",
+    "date": "2025-10-29T15:55:16.127"
+  }
+},
+{
+  "model": "shop.purchase",
+  "pk": 4,
+  "fields": {
+    "product": 1,
+    "person": "fhdfh",
+    "address": "fhfhdh",
+    "date": "2025-10-29T16:08:18.354"
+  }
+},
+{
+  "model": "shop.purchase",
+  "pk": 5,
+  "fields": {
+    "product": 1,
+    "person": "efefef",
+    "address": "efefef",
+    "date": "2025-10-29T16:12:07.903"
+  }
+},
+{
+  "model": "shop.purchase",
+  "pk": 6,
+  "fields": {
+    "product": 2,
+    "person": "fefef",
+    "address": "efefef",
+    "date": "2025-10-29T16:12:14.563"
+  }
+},
+{
+  "model": "shop.purchase",
+  "pk": 7,
+  "fields": {
+    "product": 3,
+    "person": "efefeew",
+    "address": "egewgewg",
+    "date": "2025-10-29T16:12:20.483"
+  }
+},
+{
+  "model": "shop.purchase",
+  "pk": 8,
+  "fields": {
+    "product": 1,
+    "person": "gegege",
+    "address": "gegege",
+    "date": "2025-10-29T16:14:43.718"
+  }
+},
+{
+  "model": "shop.purchase",
+  "pk": 9,
+  "fields": {
+    "product": 1,
+    "person": "hyryj",
+    "address": "rjtjtj",
+    "date": "2025-10-29T16:17:04.252"
+  }
+},
+{
+  "model": "shop.purchase",
+  "pk": 10,
+  "fields": {
+    "product": 1,
+    "person": "hyryj",
+    "address": "rjtjtj",
+    "date": "2025-10-29T16:17:30.190"
+  }
+},
+{
+  "model": "shop.purchase",
+  "pk": 11,
+  "fields": {
+    "product": 3,
+    "person": "gnnfgn",
+    "address": "gngngn",
+    "date": "2025-10-29T16:17:36.324"
+  }
+},
+{
+  "model": "shop.purchase",
+  "pk": 12,
+  "fields": {
+    "product": 1,
+    "person": "fefefe",
+    "address": "efefef",
+    "date": "2025-10-29T16:19:18.533"
+  }
+},
+{
+  "model": "shop.purchase",
+  "pk": 13,
+  "fields": {
+    "product": 2,
+    "person": "dfdfdfd",
+    "address": "fdfdfdf",
+    "date": "2025-10-29T16:19:24.394"
+  }
+},
+{
+  "model": "shop.purchase",
+  "pk": 14,
+  "fields": {
+    "product": 2,
+    "person": "fefef",
+    "address": "efefe",
+    "date": "2025-10-29T16:28:41.770"
+  }
+},
+{
+  "model": "shop.purchase",
+  "pk": 15,
+  "fields": {
+    "product": 1,
+    "person": "efefef",
+    "address": "efefef",
+    "date": "2025-10-29T16:28:48.822"
+  }
+},
+{
+  "model": "shop.purchase",
+  "pk": 16,
+  "fields": {
+    "product": 2,
+    "person": "fff",
+    "address": "fff",
+    "date": "2025-10-29T17:17:49.776"
+  }
+},
+{
+  "model": "shop.purchase",
+  "pk": 17,
+  "fields": {
+    "product": 1,
+    "person": "efef",
+    "address": "efef",
+    "date": "2025-10-29T17:18:05.868"
+  }
+}
+]
