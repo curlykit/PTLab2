@@ -1,28 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Покупка</title>
+    <title>Оформление покупки</title>
 </head>
 <body>
-    <div>
-        <h3>Покупка</h3>
-        <form method="post">{% csrf_token %}
-            <input type="hidden" value="{{ view.kwargs.product_id }}" name="product" />
-            <table>
-                <tr>
-                    <td><p>Введите свое имя </p></td>
-                    <td><input type="text" name="person" /> </td>
-                </tr>
-                <tr>
-                    <td><p>Введите адрес доставки:</p></td>
-                    <td>
-                        <input type="text" name="address" />
-                    </td>
-                </tr>
-                <tr><td><input type="submit" value="Отправить" /> </td><td></td></tr>
-            </table>
-        </form>
-    </div>
+    <h1>Оформление покупки: {{ product.name }}</h1>
+    <p>Цена: {{ product.price }} руб.</p>
+    <p>Осталось: {{ product.quantity }} шт.</p>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <label>Ваше имя:</label>
+            <input type="text" name="person" required>
+        </div>
+        <div>
+            <label>Адрес доставки:</label>
+            <input type="text" name="address" required>
+        </div>
+        <button type="submit">Подтвердить покупку</button>
+    </form>
+    
+    <a href="/">Вернуться к списку товаров</a>
 </body>
 </html>

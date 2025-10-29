@@ -11,13 +11,21 @@
             <tr>
                 <td><p>Наименование</p></td>
                 <td><p>Цена</p></td>
-                <td></td>
+                <td><p>Количество</p></td>
+                <td><p>Действие</p></td>
             </tr>
             {% for p in products %}
                 <tr>
                     <td><p>{{ p.name }}</p></td>
                     <td><p>{{ p.price }}</p></td>
-                    <td><p><a href="/buy/{{ p.id }}">Купить</a></p></td>
+                    <td><p>{{ p.quantity }} шт.</p></td>
+                    <td>
+                        {% if p.quantity > 0 %}
+                            <p><a href="/buy/{{ p.id }}">Купить</a></p>
+                        {% else %}
+                            <p style="color: red;">Нет в наличии</p>
+                        {% endif %}
+                    </td>
                 </tr>
             {% endfor %}
         </table>

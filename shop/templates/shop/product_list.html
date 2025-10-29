@@ -1,0 +1,23 @@
+<h1>Список</h1>
+<table>
+    <tr>
+        <th>Наименование</th>
+        <th>Цена</th>
+        <th>Количество</th>
+        <th>Действие</th>
+    </tr>
+    {% for product in products %}
+    <tr>
+        <td>{{ product.name }}</td>
+        <td>{{ product.price }}</td>
+        <td>{{ product.quantity }} шт.</td>
+        <td>
+            {% if product.quantity > 0 %}
+                <a href="{% url 'buy_product' product.id %}">Купить</a>
+            {% else %}
+                <span style="color: red;">Нет в наличии</span>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
