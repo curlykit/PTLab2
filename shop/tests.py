@@ -196,5 +196,5 @@ class IntegrationTest(TestCase):
             'person': 'User 4',
             'address': 'Address 4'
         })
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertIn(b"This product is out of stock", response.content)
