@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt  # ← ДОБАВЬТЕ ЭТУ СТРОКУ
 from .models import Product, Purchase
 
 def index(request):
@@ -7,10 +8,10 @@ def index(request):
     products = Product.objects.all()
     return render(request, 'shop/index.html', {'products': products})
 
+@csrf_exempt  # ← ДОБАВЬТЕ ЭТУ СТРОКУ ПЕРЕД ФУНКЦИЕЙ
 def buy_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     
-    # Проверяем наличие товара ДЛЯ ВСЕХ ЗАПРОСОВ
     if product.quantity <= 0:
         return HttpResponse("This product is out of stock", status=400)
     
