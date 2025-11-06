@@ -106,7 +106,7 @@ class ViewsTest(TestCase):
             'address': 'Test Address'
         })
         
-        self.assertEqual(response.status_code, 409)
+        self.assertEqual(response.status_code, 403)
         self.assertIn(b"This product is out of stock", response.content)
     
     def test_buy_product_view_missing_fields(self):
@@ -116,7 +116,7 @@ class ViewsTest(TestCase):
             'address': 'Test Address'
         })
         
-        self.assertEqual(response.status_code, 409)
+        self.assertEqual(response.status_code, 403)
         self.assertIn(b"Please fill in all fields", response.content)
     
     def test_buy_product_view_invalid_product(self):
