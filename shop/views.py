@@ -27,7 +27,7 @@ def buy_product(request, product_id):
         address = request.POST.get('address')
         
         if not person or not address:
-            return HttpResponse("Please fill in all fields", status=400)
+            return HttpResponse("Please fill in all fields", status=403)
         
         # Уменьшаем количество товара
         product.quantity -= 1
