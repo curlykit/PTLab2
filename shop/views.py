@@ -10,7 +10,7 @@ def index(request):
 def buy_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     
-    # Проверяем наличие товара
+    # Проверяем наличие товара ДЛЯ ВСЕХ ЗАПРОСОВ
     if product.quantity <= 0:
         return HttpResponse("This product is out of stock", status=400)
     
