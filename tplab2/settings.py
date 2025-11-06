@@ -154,3 +154,5 @@ try:
     print("✅ DATABASE: Connection successful")
 except Exception as e:
     print(f"❌ DATABASE: Connection failed - {e}")
+
+TEST_RUNNER = 'test_runner.ColorfulTestRunner'
