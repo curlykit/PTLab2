@@ -12,32 +12,33 @@ def index(request):
 def buy_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     
+    print(f"=== DEBUG ===")
+    print(f"Product: {product.name}, Quantity: {product.quantity}")
+    print(f"Method: {request.method}")
+    print(f"POST data: {dict(request.POST)}")
+    
     if product.quantity <= 0:
         return HttpResponse("This product is out of stock", status=403)
     
-    # Если GET запрос - показываем форму
     if request.method == 'GET':
-        return render(request, 'shop/purchase_form.html', {
-            'product': product
-        })
+        return render(request, 'shop/purchase_form.html', {'product': product})
     
-    # Если POST запрос - обрабатываем покупку
     elif request.method == 'POST':
         person = request.POST.get('person')
         address = request.POST.get('address')
         
+        print(f"Person: {person}, Address: {address}")  # отладка
+        
         if not person or not address:
             return HttpResponse("Please fill in all fields", status=403)
         
-        # Уменьшаем количество товара
         product.quantity -= 1
         product.save()
         
-        # Создаем запись о покупке
         Purchase.objects.create(
             product=product,
             person=person,
             address=address
         )
         
-        return HttpResponse(f"Thank you for your purchase, {person}! Product '{product.name}' will be shipped to: {address}. Remaining: {product.quantity} pcs.")
+        return HttpResponse(f"Thank you for your purchase, {person}! Remaining: {product.quantity} pcs.")
