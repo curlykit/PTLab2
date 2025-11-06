@@ -1,31 +1,18 @@
-from django.shortcuts import render, get_object_or_404  # ← ДОБАВИТЬ ЭТО
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
-from django.views.generic.edit import CreateView
-
 from .models import Product, Purchase
 
-
-# Create your views here.
 def index(request):
+    """Главная страница со списком товаров"""
     products = Product.objects.all()
-    context = {'products': products}
-    return render(request, 'shop/index.html', context)
-
-
-class PurchaseCreate(CreateView):
-    model = Purchase
-    fields = ['product', 'person', 'address']
-
-    def form_valid(self, form):
-        self.object = form.save()
-        return HttpResponse(f'Спасибо за покупку, {self.object.person}!')
+    return render(request, 'shop/index.html', {'products': products})
 
 def buy_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     
     # Проверяем наличие товара
     if product.quantity <= 0:
-        return HttpResponse("Этот товар закончился!", status=400)
+        return HttpResponse("This product is out of stock", status=400)
     
     # Если GET запрос - показываем форму
     if request.method == 'GET':
@@ -39,7 +26,7 @@ def buy_product(request, product_id):
         address = request.POST.get('address')
         
         if not person or not address:
-            return HttpResponse("Заполните все поля!", status=400)
+            return HttpResponse("Please fill in all fields", status=400)
         
         # Уменьшаем количество товара
         product.quantity -= 1
@@ -52,4 +39,4 @@ def buy_product(request, product_id):
             address=address
         )
         
-        return HttpResponse(f"Спасибо за покупку, {person}! Товар '{product.name}' отправлен по адресу: {address}. Осталось: {product.quantity} шт.")
+        return HttpResponse(f"Thank you for your purchase, {person}! Product '{product.name}' will be shipped to: {address}. Remaining: {product.quantity} pcs.")
