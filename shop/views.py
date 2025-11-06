@@ -8,12 +8,12 @@ def index(request):
     products = Product.objects.all()
     return render(request, 'shop/index.html', {'products': products})
 
-@csrf_exempt  # ← ДОБАВЬТЕ ЭТУ СТРОКУ ПЕРЕД ФУНКЦИЕЙ
+@csrf_exempt
 def buy_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     
     if product.quantity <= 0:
-        return HttpResponse("This product is out of stock", status=400)
+        return HttpResponse("This product is out of stock", status=403)  # ← ИЗМЕНИТЕ 400 на 403
     
     # Если GET запрос - показываем форму
     if request.method == 'GET':
