@@ -1,6 +1,5 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from django.contrib.auth.models import User
 from .models import Product, Purchase
 
 class ProductModelTest(TestCase):
@@ -123,6 +122,39 @@ class ViewsTest(TestCase):
         """Тест покупки несуществующего товара"""
         response = self.client.get(reverse('buy', args=[999]))  # Несуществующий ID
         self.assertEqual(response.status_code, 404)
+
+    def test_index_view_exact_proof(self):
+        response = self.client.get(reverse('index'))
+        content = response.content.decode('utf-8')
+    
+        product_pos = content.find("Test Product")
+        self.assertNotEqual(product_pos, -1, "Продукт 'Test Product' не найден")
+    
+        row_start = content.rfind('<tr>', 0, product_pos)
+        self.assertNotEqual(row_start, -1, "Не найдено начало строки таблицы")
+    
+        row_end = content.find('</tr>', product_pos)
+        self.assertNotEqual(row_end, -1, "Не найден конец строки таблицы")
+    
+        product_row = content[row_start:row_end + 5]
+    
+        # Разбираем строку на ячейки
+        cells = product_row.split('<td>')
+
+        name_cell = cells[1]
+        self.assertIn("Test Product", name_cell)
+
+        price_cell = cells[2]
+        self.assertIn("1500", price_cell)
+
+        quantity_cell = cells[3] 
+        self.assertIn("2", quantity_cell)
+    
+        # Цена находится именно во второй ячейке
+        print("    СТРУКТУРА СТРОКИ:")
+        print(f"   Ячейка 1 (название): {cells[1].split('</td>')[0]}")
+        print(f"   Ячейка 2 (цена): {cells[2].split('</td>')[0]}")
+        print(f"   Ячейка 3 (количество): {cells[3].split('</td>')[0]}")
 
 class IntegrationTest(TestCase):
     """Интеграционные тесты"""

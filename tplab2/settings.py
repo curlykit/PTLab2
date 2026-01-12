@@ -1,24 +1,21 @@
 import os
-import django_heroku
-import dj_database_url
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# =========== БЕЗОПАСНОСТЬ ===========
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-%hodks^u@arq^bv-tms#o!v$c*p6_5o%yvw!!u+n9ber@*g9*f'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-измени-это-на-секретный-ключ-в-продакшене')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['ptlab2-v0xa.onrender.com', 'localhost', '127.0.0.1']
 
-
-# Application definition
-
+# =========== ПРИЛОЖЕНИЯ ===========
 INSTALLED_APPS = [
-    'shop.apps.ShopConfig',
+    'shop.apps.ShopConfig',  # Твоё приложение магазина
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -27,9 +24,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
+# =========== МИДЛВЭРЫ ===========
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Для статики на Render
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -38,8 +36,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'tplab2.urls'
+ROOT_URLCONF = 'tplab2.urls'  # Замени если у тебя другое имя проекта
 
+# =========== ШАБЛОНЫ ===========
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -56,27 +55,34 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'tplab2.wsgi.application'
+WSGI_APPLICATION = 'tplab2.wsgi.application'  # Замени если у тебя другое имя проекта
 
-
-# Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-# Database
+# =========== БАЗА ДАННЫХ ===========
+# ЛОКАЛЬНАЯ разработка (твой компьютер)
 DATABASES = {
-    'default': dj_database_url.config(
-        default='postgresql://postgres:ps_password@localhost/django_db',
-        conn_max_age=600
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'django_db',
+        'USER': 'postgres',
+        'PASSWORD': 'ps_password',  # Твой локальный пароль
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
 }
 
-# DATABASE_URL = os.environ.get('DATABASE_URL')
-# db_from_env = dj_database_url.config(default=DATABASE_URL, conn_max_age=500, ssl_require=True)
-# DATABASES['default'].update(db_from_env)
+# ПРОДАКШЕН на Render.com (автоматически переопределит настройки)
+import dj_database_url
 
-# Password validation
-# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL:
+    DATABASES['default'] = dj_database_url.config(
+        default=DATABASE_URL,
+        conn_max_age=600,
+        conn_health_checks=True,
+        ssl_require=True  # Важно для Render
+    )
 
+# =========== ВАЛИДАЦИЯ ПАРОЛЕЙ ===========
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -92,51 +98,35 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/3.2/topics/i18n/
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'Europe/Volgograd'
-
+# =========== ИНТЕРНАЦИОНАЛИЗАЦИЯ ===========
+LANGUAGE_CODE = 'ru-ru'  # Или 'en-us'
+TIME_ZONE = 'Europe/Moscow'
 USE_I18N = True
-
 USE_L10N = True
+USE_TZ = True
 
-USE_TZ = False
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
-
+# =========== СТАТИЧЕСКИЕ ФАЙЛЫ ===========
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Для collectstatic
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-# django_heroku.settings(locals())
-
-# Parse database configuration from $DATABASE_URL для Render
-import dj_database_url
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
-
-# DATABASE DEBUG
-print("=== DATABASE DEBUG ===")
-print(f"DATABASE_URL: {os.environ.get('DATABASE_URL')}")
-print(f"DATABASES default: {DATABASES['default']}")
-
-# Проверка подключения к базе
-try:
-    from django.db import connection
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT 1")
-    print("✅ DATABASE: Connection successful")
-except Exception as e:
-    print(f"❌ DATABASE: Connection failed - {e}")
-
+# =========== ДЛЯ ТЕСТОВ ===========
 TEST_RUNNER = 'test_runner.ColorfulTestRunner'
+
+# =========== ДЕБАГ ИНФОРМАЦИЯ (можно убрать в продакшене) ===========
+if DEBUG:
+    print("=== DATABASE CONFIGURATION ===")
+    print(f"DATABASE_URL from env: {os.environ.get('DATABASE_URL')}")
+    print(f"DATABASES default config: {DATABASES['default']}")
+    
+    # Проверка подключения к базе
+    try:
+        from django.db import connection
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+        print("✅ DATABASE: Connection successful")
+    except Exception as e:
+        print(f"❌ DATABASE: Connection failed - {e}")
