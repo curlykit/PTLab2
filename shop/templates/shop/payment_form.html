@@ -44,10 +44,10 @@
     
     <div class="info-box">
         <h3>Сотрудник: {{ employee.name }}</h3>
-        <p><strong>Должность:</strong> {{ employee.position }}</p>
-        <p><strong>Оклад:</strong> {{ employee.base_salary|floatformat:2 }} руб.</p>
-        <p><strong>Стаж работы:</strong> {{ employee.years_of_service|floatformat:1 }} лет</p>
-        <p><strong>Категория:</strong> {{ employee.employee_type }}</p>
+        <p><strong>Должность:</strong> {{ employee.calculated_position }}</p>
+        <p><strong>Оклад:</strong> {{ employee.price|floatformat:2 }} руб.</p>
+        <p><strong>Стаж работы:</strong> {{ employee.quantity|floatformat:1 }} лет</p>
+        <p><strong>Категория:</strong> {{ employee.calculated_employee_type }}</p>
     </div>
     
     <h2>Дополнительные начисления и удержания</h2>

@@ -37,6 +37,24 @@
         .nav-links a:hover { background-color: #45a049; }
         .section { margin: 30px 0; }
         .highlight { background-color: #e8f4f8; padding: 15px; border-radius: 5px; }
+        .warning { 
+            background-color: #fff3cd; 
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .employee-type {
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        .junior { background-color: #ffeb3b; color: #333; }
+        .middle { background-color: #4caf50; color: white; }
+        .senior { background-color: #2196f3; color: white; }
+        .lead { background-color: #9c27b0; color: white; }
+        .manager { background-color: #ff9800; color: white; }
     </style>
 </head>
 <body>
@@ -49,6 +67,16 @@
     
     {% if analytics %}
     
+    <!-- Предупреждение если pandas не установлен -->
+    {% if not analytics.pandas_available %}
+    <div class="warning">
+        <h3>⚠️ Базовая аналитика</h3>
+        <p>Для расширенной аналитики с Pandas установите библиотеку:</p>
+        <pre style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0;">
+pip install pandas numpy</pre>
+    </div>
+    {% endif %}
+    
     <div class="section">
         <h2>Общая статистика по сотрудникам</h2>
         <div class="stat-container">
@@ -58,52 +86,96 @@
                 <div class="stat-label">сотрудников в системе</div>
             </div>
             
+            {% if analytics.correlation_exp_salary %}
             <div class="stat-card">
                 <h4>Корреляция стаж-зарплата</h4>
                 <div class="stat-value">{{ analytics.correlation_exp_salary|floatformat:3 }}</div>
-                <div class="stat-label">чем ближе к 1, тем сильнее связь</div>
+                <div class="stat-label">
+                    {% if analytics.correlation_exp_salary > 0.7 %}
+                    Сильная прямая связь
+                    {% elif analytics.correlation_exp_salary > 0.3 %}
+                    Умеренная связь
+                    {% elif analytics.correlation_exp_salary > 0 %}
+                    Слабая связь
+                    {% elif analytics.correlation_exp_salary == 0 %}
+                    Нет связи
+                    {% else %}
+                    Обратная связь
+                    {% endif %}
+                </div>
             </div>
+            {% endif %}
+            
+            {% if analytics.salary_stats.sum %}
+            <div class="stat-card">
+                <h4>Общий фонд оплаты</h4>
+                <div class="stat-value">{{ analytics.salary_stats.sum|floatformat:2 }} руб.</div>
+                <div class="stat-label">сумма всех окладов</div>
+            </div>
+            {% endif %}
         </div>
     </div>
     
     <div class="section">
         <h2>Статистика по окладам</h2>
         <div class="stat-container">
+            {% if analytics.salary_stats.mean %}
             <div class="stat-card">
                 <h4>Средний оклад</h4>
                 <div class="stat-value">{{ analytics.salary_stats.mean|floatformat:2 }} руб.</div>
                 <div class="stat-label">средняя величина</div>
             </div>
+            {% endif %}
             
+            {% if analytics.salary_stats.median %}
             <div class="stat-card">
                 <h4>Медианный оклад</h4>
                 <div class="stat-value">{{ analytics.salary_stats.median|floatformat:2 }} руб.</div>
                 <div class="stat-label">серединное значение</div>
             </div>
+            {% endif %}
             
+            {% if analytics.salary_stats.max %}
             <div class="stat-card">
                 <h4>Максимальный оклад</h4>
                 <div class="stat-value">{{ analytics.salary_stats.max|floatformat:2 }} руб.</div>
                 <div class="stat-label">наивысшая зарплата</div>
             </div>
+            {% endif %}
             
+            {% if analytics.salary_stats.min %}
             <div class="stat-card">
                 <h4>Минимальный оклад</h4>
                 <div class="stat-value">{{ analytics.salary_stats.min|floatformat:2 }} руб.</div>
                 <div class="stat-label">наименьшая зарплата</div>
             </div>
+            {% endif %}
             
+            {% if analytics.salary_stats.std %}
             <div class="stat-card">
                 <h4>Стандартное отклонение</h4>
                 <div class="stat-value">{{ analytics.salary_stats.std|floatformat:2 }} руб.</div>
                 <div class="stat-label">разброс значений</div>
             </div>
+            {% endif %}
+            
+            {% if analytics.salary_quartiles %}
+            <div class="stat-card">
+                <h4>Квартили зарплат</h4>
+                <div class="stat-value">
+                    Q1: {{ analytics.salary_quartiles.q1|floatformat:0 }}<br>
+                    Q2: {{ analytics.salary_quartiles.q2|floatformat:0 }}<br>
+                    Q3: {{ analytics.salary_quartiles.q3|floatformat:0 }}
+                </div>
+                <div class="stat-label">25%, 50%, 75% распределения</div>
+            </div>
+            {% endif %}
         </div>
     </div>
     
+    {% if analytics.by_position %}
     <div class="section">
         <h2>Анализ по должностям</h2>
-        {% if analytics.by_position %}
         <table>
             <tr>
                 <th>Должность</th>
@@ -120,14 +192,12 @@
             </tr>
             {% endfor %}
         </table>
-        {% else %}
-        <p>Нет данных для анализа по должностям</p>
-        {% endif %}
     </div>
+    {% endif %}
     
+    {% if analytics.by_type %}
     <div class="section">
         <h2>Средние оклады по категориям</h2>
-        {% if analytics.by_type %}
         <table>
             <tr>
                 <th>Категория сотрудника</th>
@@ -135,15 +205,17 @@
             </tr>
             {% for emp_type, avg_salary in analytics.by_type.items %}
             <tr>
-                <td>{{ emp_type }}</td>
+                <td>
+                    <span class="employee-type {{ emp_type|lower }}">
+                        {{ emp_type }}
+                    </span>
+                </td>
                 <td>{{ avg_salary|floatformat:2 }} руб.</td>
             </tr>
             {% endfor %}
         </table>
-        {% else %}
-        <p>Нет данных по категориям сотрудников</p>
-        {% endif %}
     </div>
+    {% endif %}
     
     {% if analytics.bonus_stats %}
     <div class="section">
@@ -163,25 +235,119 @@
                 <h4>Максимальная премия</h4>
                 <div class="stat-value">{{ analytics.bonus_stats.max_bonus|floatformat:2 }} руб.</div>
             </div>
+            
+            {% if analytics.bonus_stats.min_bonus %}
+            <div class="stat-card">
+                <h4>Минимальная премия</h4>
+                <div class="stat-value">{{ analytics.bonus_stats.min_bonus|floatformat:2 }} руб.</div>
+            </div>
+            {% endif %}
         </div>
     </div>
     {% endif %}
+    
+    {% if analytics.by_payment_type %}
+    <div class="section">
+        <h2>Выплаты по типам</h2>
+        <table>
+            <tr>
+                <th>Тип выплаты</th>
+                <th>Количество</th>
+                <th>Общая сумма</th>
+                <th>Средняя сумма</th>
+            </tr>
+            {% for payment_type, stats in analytics.by_payment_type.items %}
+            <tr>
+                <td>{{ payment_type }}</td>
+                <td>{{ stats.count }}</td>
+                <td>{{ stats.sum|floatformat:2 }} руб.</td>
+                <td>{{ stats.mean|floatformat:2 }} руб.</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+    
+    {% if analytics.top_employees_by_bonus %}
+    <div class="section">
+        <h2>Топ сотрудников по бонусам</h2>
+        <table>
+            <tr>
+                <th>Сотрудник</th>
+                <th>Сумма бонусов</th>
+            </tr>
+            {% for employee, total_bonus in analytics.top_employees_by_bonus.items %}
+            <tr>
+                <td>{{ employee }}</td>
+                <td>{{ total_bonus|floatformat:2 }} руб.</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+    
+    <!-- Блок с текущими сотрудниками -->
+    <div class="section">
+        <h2>Текущие сотрудники в системе</h2>
+        <table>
+            <tr>
+                <th>ФИО</th>
+                <th>Должность</th>
+                <th>Оклад</th>
+                <th>Стаж</th>
+                <th>Категория</th>
+            </tr>
+            {% for emp in employees %}
+            <tr>
+                <td>{{ emp.name }}</td>
+                <td>{{ emp.calculated_position }}</td>
+                <td>{{ emp.price|floatformat:2 }} руб.</td>
+                <td>{{ emp.quantity }} лет</td>
+                <td>
+                    <span class="employee-type {{ emp.calculated_employee_type|lower }}">
+                        {{ emp.calculated_employee_type }}
+                    </span>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 20px;">
+                    Нет данных о сотрудниках
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
     
     {% else %}
     <div class="highlight">
         <h3>Нет данных для анализа</h3>
         <p>В системе отсутствуют данные о сотрудниках и выплатах.</p>
+        <p><a href="/">Добавьте сотрудников</a> для начала работы с аналитикой.</p>
     </div>
     {% endif %}
     
     <div class="section highlight">
         <h3>Использованные технологии анализа:</h3>
         <ul>
-            <li><strong>Pandas</strong> - для агрегации и анализа данных</li>
-            <li><strong>NumPy</strong> - для статистических вычислений</li>
-            <li><strong>Полиморфные объекты</strong> - разные типы сотрудников</li>
-            <li><strong>5 агрегирующих функций</strong> - сумма, среднее, медиана, максимум, минимум</li>
+            <li><strong>Django ORM</strong> - для агрегации и фильтрации данных</li>
+            {% if analytics.pandas_available %}
+            <li><strong>Pandas</strong> - для сложной агрегации и анализа данных</li>
+            <li><strong>NumPy</strong> - для статистических вычислений и корреляций</li>
+            {% endif %}
+            <li><strong>Полиморфные объекты</strong> - разные типы сотрудников через свойства</li>
+            <li><strong>5+ агрегирующих функций</strong> - сумма, среднее, медиана, максимум, минимум, стандартное отклонение</li>
+            <li><strong>SQL-запросы</strong> - оптимизированные группировки через БД</li>
         </ul>
+        
+        <h4 style="margin-top: 20px;">📊 Ключевые показатели курсовой работы:</h4>
+        <ol>
+            <li>Полиморфная обработка объектов сотрудников (Junior/Middle/Senior)</li>
+            <li>5+ агрегирующих значений с использованием Pandas</li>
+            <li>Корреляционный анализ стаж-зарплата</li>
+            <li>Квартильное распределение зарплат</li>
+            <li>Группировка по должностям и типам сотрудников</li>
+        </ol>
     </div>
 </body>
 </html>

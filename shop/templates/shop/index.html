@@ -64,6 +64,7 @@
         </div>
         <div style="margin-top: 10px;">
             <span class="stat-box">Junior: <strong>{{ analytics.junior_count }}</strong></span>
+            <span class="stat-box">Middle: <strong>{{ analytics.middle_count }}</strong></span>
             <span class="stat-box">Senior: <strong>{{ analytics.senior_count }}</strong></span>
         </div>
     </div>
@@ -84,12 +85,12 @@
             {% for emp in employees %}
                 <tr>
                     <td><p><strong>{{ emp.name }}</strong></p></td>
-                    <td><p>{{ emp.position }}</p></td>
-                    <td><p>{{ emp.base_salary|floatformat:2 }}</p></td>
-                    <td><p>{{ emp.years_of_service|floatformat:1 }}</p></td>
+                    <td><p>{{ emp.calculated_position }}</p></td>
+                    <td><p>{{ emp.price|floatformat:2 }}</p></td>
+                    <td><p>{{ emp.quantity|floatformat:1 }}</p></td>
                     <td>
-                        <span class="employee-type {{ emp.employee_type|lower }}">
-                            {{ emp.employee_type }}
+                        <span class="employee-type {{ emp.calculated_employee_type|lower }}">
+                            {{ emp.calculated_employee_type }}
                         </span>
                     </td>
                     <td>

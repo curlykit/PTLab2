@@ -45,16 +45,16 @@
         {% for employee in employees %}
         <tr>
             <td><strong>{{ employee.name }}</strong></td>
-            <td>{{ employee.position }}</td>
-            <td>{{ employee.base_salary|floatformat:2 }}</td>
-            <td>{{ employee.years_of_service|floatformat:1 }}</td>
+            <td>{{ employee.calculated_position }}</td>
+            <td>{{ employee.price|floatformat:2 }}</td>
+            <td>{{ employee.quantity|floatformat:1 }}</td>
             <td>
-                <span class="employee-type {{ employee.employee_type|lower }}">
-                    {{ employee.employee_type }}
+                <span class="employee-type {{ employee.calculated_employee_type|lower }}">
+                    {{ employee.calculated_employee_type }}
                 </span>
             </td>
             <td>
-                <a href="{% url 'process_payment' employee.id %}">Рассчитать зарплату</a>
+                <a href="{% url 'process_payment' employee.id %}" class="action-btn">Рассчитать зарплату</a>
             </td>
         </tr>
         {% empty %}
