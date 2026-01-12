@@ -36,13 +36,9 @@ class ProductAdmin(admin.ModelAdmin):
         }),
         ('Автоматические расчеты', {
             'fields': (),
-            'description': format_html(
-                '<span style="color: #666; font-style: italic;">'
-                'Автоматически рассчитывается:<br>'
-                '- Должность: если не указана, будет "Специалист"<br>'
-                '- Уровень: если не выбран, определяется по стажу'
-                '</span>'
-            ),
+            'description': 'Автоматически рассчитывается:<br>'
+                        '- Должность: если не указана, будет "Специалист"<br>'
+                        '- Уровень: если не выбран, определяется по стажу',
             'classes': ('collapse',),
         }),
     )
@@ -82,11 +78,11 @@ class ProductAdmin(admin.ModelAdmin):
     
     def employee_status(self, obj):
         if obj.quantity < 1:
-            return format_html('<span style="color: orange;">🟡 Новый</span>')
+            return format_html('<span style="color: orange;">{} Новый</span>', '🟡')
         elif obj.quantity < 3:
-            return format_html('<span style="color: green;">🟢 Опытный</span>')
+            return format_html('<span style="color: green;">{} Опытный</span>', '🟢')
         else:
-            return format_html('<span style="color: blue;">🔵 Ветеран</span>')
+            return format_html('<span style="color: blue;">{} Ветеран</span>', '🔵')
     employee_status.short_description = 'Статус'
     
     # Действия в админке
@@ -164,16 +160,16 @@ class PurchaseAdmin(admin.ModelAdmin):
     def bonus_display(self, obj):
         bonus = obj.bonus
         if bonus > 0:
-            return format_html(f'<span style="color: green; font-weight: bold;">+{bonus:.2f} руб.</span>')
+            return format_html('<span style="color: green; font-weight: bold;">+{} руб.</span>', f"{bonus:.2f}")
         elif bonus == 0:
             return format_html('<span style="color: #666;">0.00 руб.</span>')
         else:
-            return format_html(f'<span style="color: red;">{bonus:.2f} руб.</span>')
+            return format_html('<span style="color: red;">{} руб.</span>', f"{bonus:.2f}")
     bonus_display.short_description = 'Премия'
     
     def total_salary_display(self, obj):
         total = obj.final_salary
-        return format_html(f'<b>{total:.2f} руб.</b>')
+        return format_html('<b>{} руб.</b>', f"{total:.2f}")
     total_salary_display.short_description = 'Итого'
     total_salary_display.admin_order_field = 'person'
     
