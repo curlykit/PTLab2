@@ -9,29 +9,66 @@ import numpy as np
 from django.db.models import Sum, Avg, Max, Min
 
 def index(request):
-    """Главная страница со списком СОТРУДНИКОВ (было товаров)"""
-    employees = Product.objects.all()  # Переименовано products → employees
+    """Главная страница со списком СОТРУДНИКОВ"""
+    employees = Product.objects.all()
     
     # =========== АНАЛИТИКА ЗАРПЛАТ ===========
-    # Используем полиморфные объекты для вычисления агрегирующих значений
-    salaries = [emp.base_salary for emp in employees]
+    salaries = [float(emp.price) for emp in employees]  # Используем price (оклад)
     
     if salaries:
+        # Рассчитываем медиану без numpy для надежности
+        sorted_salaries = sorted(salaries)
+        n = len(sorted_salaries)
+        if n % 2 == 0:
+            median_salary = (sorted_salaries[n//2 - 1] + sorted_salaries[n//2]) / 2
+        else:
+            median_salary = sorted_salaries[n//2]
+        
+        # Подсчёт типов сотрудников ТОЛЬКО по явно заданному полю employee_type
+        junior_count = 0
+        middle_count = 0
+        senior_count = 0
+        lead_count = 0
+        manager_count = 0
+        other_count = 0
+        
+        for emp in employees:
+            # Смотрим ТОЛЬКО явно заданный тип в БД (employee_type)
+            emp_type = emp.employee_type  # Это поле: 'JUNIOR', 'MIDDLE', 'SENIOR' и т.д.
+            
+            if emp_type == 'JUNIOR':
+                junior_count += 1
+            elif emp_type == 'MIDDLE':
+                middle_count += 1
+            elif emp_type == 'SENIOR':
+                senior_count += 1
+            elif emp_type == 'LEAD':
+                lead_count += 1
+            elif emp_type == 'MANAGER':
+                manager_count += 1
+            elif emp_type == 'OTHER':
+                other_count += 1
+            # Если employee_type пустое или None - не считаем!
+        
         analytics = {
             'total_salary_fund': sum(salaries),  # Сумма всех окладов
             'average_salary': sum(salaries) / len(salaries),  # Средняя зарплата
-            'median_salary': np.median(salaries),  # Медианная зарплата
+            'median_salary': median_salary,  # Медианная зарплата (без numpy)
             'max_salary': max(salaries),  # Максимальная зарплата
             'min_salary': min(salaries),  # Минимальная зарплата
             'employee_count': len(employees),
-            'junior_count': len([e for e in employees if e.years_of_service < 2]),
-            'senior_count': len([e for e in employees if e.years_of_service >= 5]),
+            'junior_count': junior_count,
+            'middle_count': middle_count,  # Добавили middle_count
+            'senior_count': senior_count,
+            'lead_count': lead_count,
+            'manager_count': manager_count,
+            'other_count': other_count,
         }
     else:
         analytics = {}
     
     return render(request, 'shop/index.html', {
-        'employees': employees,  # Было 'products'
+        'employees': employees,
         'analytics': analytics
     })
 
