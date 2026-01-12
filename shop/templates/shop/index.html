@@ -2,33 +2,124 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Товары</title>
+    <title>Система управления персоналом</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        h3 { color: #555; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #4CAF50; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        .analytics { background-color: #e8f4f8; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        .stat-box { 
+            display: inline-block; 
+            background: white; 
+            padding: 10px 15px; 
+            margin: 5px; 
+            border-radius: 5px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+        }
+        .employee-type { 
+            padding: 3px 8px; 
+            border-radius: 3px; 
+            font-size: 0.8em; 
+            font-weight: bold; 
+        }
+        .junior { background-color: #ffeb3b; color: #333; }
+        .middle { background-color: #4caf50; color: white; }
+        .senior { background-color: #2196f3; color: white; }
+        .action-btn { 
+            background-color: #4CAF50; 
+            color: white; 
+            padding: 8px 15px; 
+            text-decoration: none; 
+            border-radius: 4px; 
+            display: inline-block; 
+        }
+        .action-btn:hover { background-color: #45a049; }
+        .nav { margin: 20px 0; }
+        .nav a { margin-right: 15px; }
+    </style>
 </head>
 <body>
+    <div class="nav">
+        <a href="/" class="action-btn">Главная</a>
+        <a href="/analytics/" class="action-btn">Аналитика</a>
+    </div>
+
+    <h1>📊 Система управления персоналом</h1>
+    
+    <!-- БЛОК АНАЛИТИКИ -->
+    {% if analytics %}
+    <div class="analytics">
+        <h3>📈 Аналитика фонда заработной платы</h3>
+        <div>
+            <span class="stat-box">Сотрудников: <strong>{{ analytics.employee_count }}</strong></span>
+            <span class="stat-box">Фонд оплаты: <strong>{{ analytics.total_salary_fund|floatformat:2 }} руб.</strong></span>
+            <span class="stat-box">Средняя зарплата: <strong>{{ analytics.average_salary|floatformat:2 }} руб.</strong></span>
+            <span class="stat-box">Медианная зарплата: <strong>{{ analytics.median_salary|floatformat:2 }} руб.</strong></span>
+            <span class="stat-box">Максимальная: <strong>{{ analytics.max_salary|floatformat:2 }} руб.</strong></span>
+            <span class="stat-box">Минимальная: <strong>{{ analytics.min_salary|floatformat:2 }} руб.</strong></span>
+        </div>
+        <div style="margin-top: 10px;">
+            <span class="stat-box">Junior: <strong>{{ analytics.junior_count }}</strong></span>
+            <span class="stat-box">Senior: <strong>{{ analytics.senior_count }}</strong></span>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- СПИСОК СОТРУДНИКОВ -->
     <div>
-        <h3>Список</h3>
+        <h3>👥 Список сотрудников</h3>
         <table>
             <tr>
-                <td><p>Наименование</p></td>
-                <td><p>Цена</p></td>
-                <td><p>Количество</p></td>
-                <td><p>Действие</p></td>
+                <th>Сотрудник</th>
+                <th>Должность</th>
+                <th>Оклад (руб.)</th>
+                <th>Стаж (лет)</th>
+                <th>Тип</th>
+                <th>Действие</th>
             </tr>
-            {% for p in products %}
+            {% for emp in employees %}
                 <tr>
-                    <td><p>{{ p.name }}</p></td>
-                    <td><p>{{ p.price }}</p></td>
-                    <td><p>{{ p.quantity }} шт.</p></td>
+                    <td><p><strong>{{ emp.name }}</strong></p></td>
+                    <td><p>{{ emp.position }}</p></td>
+                    <td><p>{{ emp.base_salary|floatformat:2 }}</p></td>
+                    <td><p>{{ emp.years_of_service|floatformat:1 }}</p></td>
                     <td>
-                        {% if p.quantity > 0 %}
-                            <p><a href="/buy/{{ p.id }}">Купить</a></p>
-                        {% else %}
-                            <p style="color: red;">Нет в наличии</p>
-                        {% endif %}
+                        <span class="employee-type {{ emp.employee_type|lower }}">
+                            {{ emp.employee_type }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="/buy/{{ emp.id }}" class="action-btn">
+                            Рассчитать зарплату
+                        </a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 20px;">
+                        Нет данных о сотрудниках
                     </td>
                 </tr>
             {% endfor %}
         </table>
+    </div>
+    
+    <!-- ПОЯСНЕНИЕ ДЛЯ КУРСОВОЙ -->
+    <div style="margin-top: 40px; padding: 15px; background-color: #f9f9f9; border-left: 4px solid #4CAF50;">
+        <h4>🎓 Пояснение для курсовой работы:</h4>
+        <p><strong>Тема:</strong> Система анализа заработных плат с использованием полиморфных объектов</p>
+        <p><strong>Реализовано:</strong></p>
+        <ul>
+            <li>Полиморфная обработка объектов сотрудников (разные типы: Junior, Middle, Senior)</li>
+            <li>5 агрегирующих значений: сумма, среднее, медиана, максимум, минимум</li>
+            <li>Использование Pandas для анализа данных (см. страницу "Аналитика")</li>
+            <li>Паттерны: MVC (Django), Стратегия (расчет зарплаты), Наблюдатель (логирование)</li>
+            <li>Модульные тесты, рефакторинг, БД PostgreSQL</li>
+        </ul>
     </div>
 </body>
 </html>

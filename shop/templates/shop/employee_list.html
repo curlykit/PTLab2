@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Список сотрудников</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #4CAF50; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        .action-btn { 
+            background-color: #4CAF50; 
+            color: white; 
+            padding: 5px 10px; 
+            text-decoration: none; 
+            border-radius: 3px; 
+            font-size: 0.9em; 
+        }
+        .action-btn:hover { background-color: #45a049; }
+        .employee-type { 
+            padding: 2px 6px; 
+            border-radius: 3px; 
+            font-size: 0.8em; 
+            font-weight: bold; 
+            text-transform: uppercase;
+        }
+        .junior { background-color: #ffeb3b; color: #333; }
+        .middle { background-color: #4caf50; color: white; }
+        .senior { background-color: #2196f3; color: white; }
+    </style>
+</head>
+<body>
+    <h1>Список сотрудников</h1>
+    <table>
+        <tr>
+            <th>ФИО</th>
+            <th>Должность</th>
+            <th>Оклад (руб.)</th>
+            <th>Стаж (лет)</th>
+            <th>Категория</th>
+            <th>Действие</th>
+        </tr>
+        {% for employee in employees %}
+        <tr>
+            <td><strong>{{ employee.name }}</strong></td>
+            <td>{{ employee.position }}</td>
+            <td>{{ employee.base_salary|floatformat:2 }}</td>
+            <td>{{ employee.years_of_service|floatformat:1 }}</td>
+            <td>
+                <span class="employee-type {{ employee.employee_type|lower }}">
+                    {{ employee.employee_type }}
+                </span>
+            </td>
+            <td>
+                <a href="{% url 'process_payment' employee.id %}">Рассчитать зарплату</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6" style="text-align: center; padding: 20px;">
+                Нет данных о сотрудниках
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+    <div style="margin-top: 30px;">
+        <h3>Перейти к:</h3>
+        <a href="/" style="margin-right: 15px;">Главная страница</a>
+        <a href="/analytics/">Аналитика зарплат</a>
+    </div>
+</body>
+</html>
