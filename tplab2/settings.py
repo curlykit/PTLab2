@@ -58,40 +58,17 @@ TEMPLATES = [
 WSGI_APPLICATION = 'tplab2.wsgi.application'  # Замени если у тебя другое имя проекта
 
 # =========== БАЗА ДАННЫХ ===========
-import dj_database_url
-
-# Базовые настройки для локальной разработки
+# ЛОКАЛЬНАЯ разработка (твой компьютер)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'django_db',
         'USER': 'postgres',
-        'PASSWORD': 'ps_password',
+        'PASSWORD': 'ps_password',  # Твой локальный пароль
         'HOST': 'localhost',
         'PORT': '5432',
     }
 }
-
-# Автоматическая настройка для разных сред
-DATABASE_URL = os.environ.get('DATABASE_URL')
-
-if DATABASE_URL:
-    # Для продакшена (Render) - используем полную конфигурацию
-    if 'render.com' in DATABASE_URL or 'postgres.railway' in DATABASE_URL:
-        DATABASES['default'] = dj_database_url.config(
-            default=DATABASE_URL,
-            conn_max_age=600,
-            conn_health_checks=True,
-            ssl_require=True  # SSL только для продакшена
-        )
-    else:
-        # Для GitHub Actions и других сред - БЕЗ SSL
-        DATABASES['default'] = dj_database_url.config(
-            default=DATABASE_URL,
-            conn_max_age=600,
-            conn_health_checks=True,
-            ssl_require=False  # Без SSL для CI
-        )
 
 # ПРОДАКШЕН на Render.com (автоматически переопределит настройки)
 import dj_database_url
@@ -102,7 +79,7 @@ if DATABASE_URL:
         default=DATABASE_URL,
         conn_max_age=600,
         conn_health_checks=True,
-        ssl_require=True  # Важно для Render
+        #ssl_require=True  # Важно для Render
     )
 
 # =========== ВАЛИДАЦИЯ ПАРОЛЕЙ ===========
