@@ -1,4 +1,3 @@
-# reset_admin_password.py
 import os
 import django
 
@@ -14,7 +13,7 @@ try:
     admin_user = User.objects.get(username='admin')
     
     # Меняем пароль на новый
-    new_password = 'new_admin_password_123'  # ⚠️ Измени этот пароль!
+    new_password = 'NewAdminPass123!'  # ⚠️ ИЗМЕНИ НА СВОЙ ПАРОЛЬ!
     admin_user.set_password(new_password)
     admin_user.save()
     
@@ -23,9 +22,10 @@ try:
     
 except User.DoesNotExist:
     # Если пользователя admin нет, создаем нового
+    new_password = '12345678'  # ⚠️ ИЛИ ЗАДАЙ ДРУГОЙ ПАРОЛЬ!
     User.objects.create_superuser(
         username='admin',
         email='admin@example.com',
-        password='12345678'
+        password=new_password  # ⬅️ Используем переменную!
     )
-    print("✅ Создан новый суперпользователь: admin / admin123")
+    print(f"✅ Создан новый суперпользователь: admin / {new_password}")  # ⬅️ Правильный вывод!
