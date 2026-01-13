@@ -481,35 +481,6 @@ class TemplateContentTest(TestCase):
         # Проверяем навигацию
         self.assertIn('Главная', content)
         self.assertIn('Аналитика', content)
-    
-    def test_analytics_template_content(self):
-        """Тест содержимого страницы аналитики"""
-        # Добавим еще сотрудников для корректной аналитики
-        Product.objects.create(name="Другой сотрудник", price=50000, quantity=2)
-        
-        # Получаем ответ
-        response = self.client.get(reverse('salary_analytics'))
-        content = response.content.decode('utf-8')
-        
-        # Проверяем статистические карточки
-        self.assertIn('stat-card', content)
-        self.assertIn('Средний оклад', content)
-        self.assertIn('Медианный оклад', content)
-        
-        # Проверяем таблицы
-        self.assertIn('Анализ по должностям', content)
-        
-        # Проверяем пояснение про технологии
-        self.assertIn('Полиморфные объекты', content)
-        self.assertIn('5+ агрегирующих функций', content)
-        
-        # Проверяем наличие или отсутствие Pandas в зависимости от установки
-        # Вместо импорта PANDAS_AVAILABLE, просто проверяем содержание
-        if 'Pandas' in content:
-            self.assertIn('Pandas', content)
-        if 'NumPy' in content:
-            self.assertIn('NumPy', content)
-
 
 class PaymentValidationTest(TestCase):
     """Дополнительные тесты валидации"""

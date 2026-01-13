@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: ptlab2
+    env: python
+    buildCommand: |
+      pip install --upgrade pip setuptools wheel
+      pip install numpy==1.24.3
+      pip install pandas==2.0.3
+      pip install -r requirements.txt
+    startCommand: gunicorn tplab2.wsgi:application
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ptlab2-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
