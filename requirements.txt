@@ -1,11 +1,16 @@
-django
-psycopg2
-dj-database-url
-gunicorn
-whitenoise
-django-heroku
-pytz
-sqlparse
-pyyaml
-pandas
-numpy
+# Основные
+Django==4.2.7
+psycopg2-binary==2.9.9  # Замени psycopg2 на psycopg2-binary (проще для установки)
+dj-database-url==2.0.0
+gunicorn==21.2.0
+whitenoise==6.6.0
+
+# Django-дополнения
+django-heroku==0.3.1
+pytz==2023.3
+sqlparse==0.4.4
+pyyaml==6.0.1
+
+# Для аналитики
+pandas==2.1.4
+numpy==1.26.3
