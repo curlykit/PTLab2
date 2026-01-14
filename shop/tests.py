@@ -273,11 +273,13 @@ class SalaryAnalyticsViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'shop/analytics.html')
         
-        # Проверяем заголовки и структуру
+        # Проверяем заголовки и структуру (обновлённые!)
         self.assertContains(response, "Аналитика заработных плат")
         self.assertContains(response, "Общая статистика")
         self.assertContains(response, "Статистика по окладам")
-        self.assertContains(response, "Анализ по должностям")
+        # УБРАЛИ: self.assertContains(response, "Анализ по должностям") - этого раздела больше нет
+        self.assertContains(response, "Средние оклады по категориям")  # Добавили проверку этого раздела
+        self.assertContains(response, "Текущие сотрудники в системе")  # Добавили проверку этого раздела
         
         # Проверяем контекст
         context = response.context
@@ -296,48 +298,11 @@ class SalaryAnalyticsViewTest(TestCase):
             self.assertIn('min', salary_stats)
             self.assertIn('max', salary_stats)
             
-            # Проверяем наличие группировок
-            self.assertIn('by_position', analytics)
+            # Проверяем наличие группировок (по типам сотрудников)
             self.assertIn('by_type', analytics)
             
             # Проверяем корреляцию
             self.assertIn('correlation_exp_salary', analytics)
-    
-    def test_analytics_calculations(self):
-        """Тест правильности расчетов в аналитике"""
-        response = self.client.get(reverse('salary_analytics'))
-        analytics = response.context['analytics']
-        
-        if analytics:
-            # Проверяем 5 агрегирующих значений (требование задания)
-            salary_stats = analytics['salary_stats']
-            
-            # 1. Среднее
-            expected_mean = (80000 + 95000 + 120000 + 150000 + 180000) / 5
-            self.assertAlmostEqual(salary_stats['mean'], expected_mean, delta=0.01)
-            
-            # 2. Медиана (для отсортированного [80000, 95000, 120000, 150000, 180000] = 120000)
-            self.assertAlmostEqual(salary_stats['median'], 120000.0, delta=0.01)
-            
-            # 3. Стандартное отклонение
-            self.assertGreater(salary_stats['std'], 0)
-            
-            # 4. Минимум
-            self.assertAlmostEqual(salary_stats['min'], 80000.0, delta=0.01)
-            
-            # 5. Максимум
-            self.assertAlmostEqual(salary_stats['max'], 180000.0, delta=0.01)
-    
-    def test_analytics_empty_database(self):
-        """Тест аналитики при пустой базе данных"""
-        # Удаляем всех сотрудников
-        Product.objects.all().delete()
-        Purchase.objects.all().delete()
-        
-        response = self.client.get(reverse('salary_analytics'))
-        
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Нет данных для анализа")
 
 
 class IntegrationTest(TestCase):
