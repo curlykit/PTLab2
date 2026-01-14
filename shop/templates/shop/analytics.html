@@ -157,28 +157,6 @@
         </div>
     </div>
     
-    {% if analytics.by_position %}
-    <div class="section">
-        <h2>Анализ по должностям</h2>
-        <table>
-            <tr>
-                <th>Должность</th>
-                <th>Количество</th>
-                <th>Средний оклад</th>
-                <th>Сумма окладов</th>
-            </tr>
-            {% for position, stats in analytics.by_position.items %}
-            <tr>
-                <td>{{ position }}</td>
-                <td>{{ stats.count }}</td>
-                <td>{{ stats.mean|floatformat:2 }} руб.</td>
-                <td>{{ stats.sum|floatformat:2 }} руб.</td>
-            </tr>
-            {% endfor %}
-        </table>
-    </div>
-    {% endif %}
-    
     {% if analytics.by_type %}
     <div class="section">
         <h2>Средние оклады по категориям</h2>
